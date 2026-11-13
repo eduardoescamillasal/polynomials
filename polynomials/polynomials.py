@@ -1,7 +1,10 @@
 from numbers import Number
 class Polynomial:
   def __init__(self, coeffs):
-    self.coefficients = coeffs
+    coeffs = list(coeffs)
+    while len(coeffs) > 1 and coeffs[-1] == 0:
+      coeffs.pop()
+    self.coefficients = tuple(coeffs)
 
   def degree(self):
     return len(self.coefficients) - 1
@@ -97,3 +100,11 @@ class Polynomial:
     for coeff in reversed(self.coefficients):
       result = result * x + coeff
     return result
+  
+  def dx(self):
+    if self.degree() == 0:
+      return Polynomial((0,))
+    coeffs = tuple(
+      d * c for d, c in enumerate(self.coefficients[1:], start=1)
+    )
+    return Polynomial(coeffs)
