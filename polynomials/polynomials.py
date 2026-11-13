@@ -80,8 +80,20 @@ class Polynomial:
   def __rmul__(self, other):
     return self * other
 
-  def __pow__(self):
-    pass
+  def __pow__(self, n):
+    if not isinstance(n, Number) or n < 0:
+      return NotImplemented
+    result = Polynomial((1,))
+    base = self
+    while n > 0:
+      if n & 1:
+        result *= base
+      base *= base
+      n //= 2
+    return result
 
-  def __call__(self, *args, **kwds):
-    pass
+  def __call__(self, x):
+    result = 0
+    for coeff in reversed(self.coefficients):
+      result = result * x + coeff
+    return result
