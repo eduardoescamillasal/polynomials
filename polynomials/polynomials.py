@@ -1,3 +1,4 @@
+from numbers import Number
 class Polynomial:
   def __init__(self, coeffs):
     self.coefficients = coeffs
@@ -21,3 +22,55 @@ class Polynomial:
   
   def __repr__(self):
     return type(self).__name__ + "(" + repr(self.coefficients) + ")"
+  
+  def __eq__(self, other):
+    return isinstance(other, Polynomial) and self.coefficients == other.coefficients
+  
+  def __add__(self, other):
+    if isinstance(other, Number):
+      return Polynomial((self.coefficients[0] + other,)
+                        + self.coefficients[1:])
+    elif isinstance(other, Polynomial):
+      common = min(self.degree(), other.degree()) + 1
+      coeffs = tuple(a + b for a, b in zip(self.coefficients[:common],
+                                           other.coefficients[:common]))
+      coeffs += self.coefficients[common:] + other.coefficients[common:]
+      return Polynomial(coeffs)
+    else:
+      return NotImplemented
+    
+  def __radd__(self, other):
+    return self + other
+  
+  def __sub__(self, other):
+    if isinstance(other, Number):
+      return Polynomial((self.coefficients[0] - other,)
+                        - self.coefficients[1:])
+    elif isinstance(other, Polynomial):
+      common = min(self.degree(), other.degree()) + 1
+      coeffs = tuple(a - b for a, b in zip(self.coefficients[:common],
+                                           other.coefficients[:common]))
+      coeffs += self.coefficients[common:] - other.coefficients[common:]
+    else:
+      return NotImplemented
+
+  def __neg__(self):
+    return Polynomial(tuple(-c for c in self.coefficients))
+
+  def __rsub__(self, other):
+    if isinstance(other, Number):
+      return (-self) + other
+    else:
+      return NotImplemented
+
+  def __mul__():
+    pass
+
+  def __rmul__():
+    pass
+
+  def __pow__():
+    pass
+
+  def __call__(self, *args, **kwds):
+    pass
