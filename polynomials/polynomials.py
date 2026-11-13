@@ -43,16 +43,17 @@ class Polynomial:
     return self + other
   
   def __sub__(self, other):
-    if isinstance(other, Number):
-      return Polynomial((self.coefficients[0] - other,)
-                        - self.coefficients[1:])
-    elif isinstance(other, Polynomial):
-      common = min(self.degree(), other.degree()) + 1
-      coeffs = tuple(a - b for a, b in zip(self.coefficients[:common],
-                                           other.coefficients[:common]))
-      coeffs += self.coefficients[common:] - other.coefficients[common:]
-    else:
-      return NotImplemented
+     if isinstance(other, Number):
+        return Polynomial((self.coefficients[0] - other,)
+                        + self.coefficients[1:])
+     elif isinstance(other, Polynomial):
+        common = min(self.degree(), other.degree()) + 1
+        coeffs = tuple(a - b for a, b in zip(self.coefficients[:common],
+                                                 other.coefficients[:common]))
+        coeffs += self.coefficients[common:] + tuple(-c for c in other.coefficients[common:])
+        return Polynomial(coeffs)
+     else:
+       return NotImplemented
 
   def __neg__(self):
     return Polynomial(tuple(-c for c in self.coefficients))
@@ -63,13 +64,23 @@ class Polynomial:
     else:
       return NotImplemented
 
-  def __mul__():
-    pass
+  def __mul__(self, other):
+    if isinstance(other, Number):
+      return Polynomial(tuple(other * c for c in self.coefficients))
+    elif isinstance(other, Polynomial):
+      deg = self.degree() + other.degree() + 1
+      coeffs = [0] * deg
+      for deg1, coeff1 in enumerate(self.coefficients):
+        for deg2, coeff2 in enumerate(other.coefficients):
+          coeffs[deg1 + deg2] += coeff1 * coeff2
+      return Polynomial(tuple(coeffs))
+    else:
+      return NotImplemented
 
-  def __rmul__():
-    pass
+  def __rmul__(self, other):
+    return self * other
 
-  def __pow__():
+  def __pow__(self):
     pass
 
   def __call__(self, *args, **kwds):
